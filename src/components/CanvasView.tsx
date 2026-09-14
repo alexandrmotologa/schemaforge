@@ -11,12 +11,13 @@ import {
   useEdgesState,
   BackgroundVariant,
 } from '@xyflow/react';
+import type { MiniMapNodeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { Table, Column, Relationship, Cardinality } from '../engine/types';
 import { TableNode } from './nodes/TableNode';
 import { RelationshipEdge } from './edges/RelationshipEdge';
-import { MapPin, Eye, EyeOff } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 
 interface CanvasViewProps {
   tables: Table[];
@@ -37,6 +38,79 @@ const nodeTypes = {
 
 const edgeTypes = {
   relationship: RelationshipEdge,
+};
+
+// Custom MiniMap Node representing miniature schema cards
+const CustomMiniMapNode: React.FC<MiniMapNodeProps> = ({
+  x,
+  y,
+  width,
+  height,
+  color,
+  selected,
+}) => {
+  const headerHeight = Math.max(6, Math.min(12, height * 0.16));
+  return (
+    <g transform={`translate(${x}, ${y})`}>
+      {/* Table Card Body */}
+      <rect
+        width={width}
+        height={height}
+        rx={5}
+        fill="#0f172a"
+        stroke={selected ? '#818cf8' : '#334155'}
+        strokeWidth={selected ? 2 : 1}
+      />
+      {/* Table Header Accent Stripe */}
+      <rect
+        width={width}
+        height={headerHeight}
+        rx={5}
+        fill={color || '#6366f1'}
+      />
+      {/* Header bottom corners clip */}
+      <rect
+        y={headerHeight - 2}
+        width={width}
+        height={2}
+        fill={color || '#6366f1'}
+      />
+      {/* Subtle Skeleton Column Lines */}
+      {height > 30 && (
+        <>
+          <line
+            x1={8}
+            y1={headerHeight + 6}
+            x2={width * 0.65}
+            y2={headerHeight + 6}
+            stroke="#475569"
+            strokeWidth={2}
+            strokeLinecap="round"
+          />
+          <line
+            x1={8}
+            y1={headerHeight + 14}
+            x2={width * 0.8}
+            y2={headerHeight + 14}
+            stroke="#334155"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+          />
+          {height > 60 && (
+            <line
+              x1={8}
+              y1={headerHeight + 22}
+              x2={width * 0.5}
+              y2={headerHeight + 22}
+              stroke="#334155"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+            />
+          )}
+        </>
+      )}
+    </g>
+  );
 };
 
 export const CanvasView: React.FC<CanvasViewProps> = ({
@@ -194,65 +268,72 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
           className="!bg-slate-900 !border !border-slate-800 !rounded-xl !overflow-hidden !shadow-2xl [&>button]:!bg-slate-900 [&>button]:!border-b [&>button]:!border-slate-800 [&>button]:!text-slate-300 hover:[&>button]:!bg-slate-800 hover:[&>button]:!text-white"
         />
 
-        {/* MiniMap with Toggle & Labels */}
-        {showMiniMap && (
-          <div className="absolute right-4 bottom-4 z-20 flex flex-col items-end gap-1 pointer-events-auto">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-900/90 border border-slate-800 rounded-lg shadow-lg text-[10px] font-mono text-slate-400">
-              <MapPin className="w-3 h-3 text-indigo-400" />
-              <span>NAVIGATOR</span>
+        {/* Polished Glassmorphic MiniMap */}
+        {showMiniMap ? (
+          <div className="absolute right-4 bottom-4 z-20 flex flex-col bg-slate-950/85 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-2 pointer-events-auto transition-all w-[240px]">
+            {/* Header bar */}
+            <div className="flex items-center justify-between pb-1.5 mb-1 border-b border-slate-800/80 px-1">
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-3 h-3 text-indigo-400" />
+                <span className="text-[10px] font-semibold tracking-wider text-slate-300 font-mono">
+                  MINIMAP
+                </span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400 font-mono">
+                  {tables.length} tables
+                </span>
+              </div>
               <button
                 onClick={() => setShowMiniMap(false)}
-                title="Hide Navigator"
-                className="ml-1 text-slate-500 hover:text-slate-300"
+                title="Minimize Map"
+                className="p-1 rounded-md text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors"
               >
-                <EyeOff className="w-3 h-3" />
+                <X className="w-3 h-3" />
               </button>
             </div>
-            <MiniMap
-              nodeColor={(node: any) => {
-                const table = node.data?.table as Table | undefined;
-                const color = table?.color || 'indigo';
-                switch (color) {
-                  case 'emerald':
-                    return '#10b981';
-                  case 'sky':
-                    return '#0284c7';
-                  case 'amber':
-                    return '#f59e0b';
-                  case 'rose':
-                    return '#f43f5e';
-                  case 'purple':
-                    return '#a855f7';
-                  case 'teal':
-                    return '#14b8a6';
-                  case 'slate':
-                    return '#64748b';
-                  default:
-                    return '#6366f1';
-                }
-              }}
-              nodeStrokeColor="#0f172a"
-              nodeStrokeWidth={2}
-              nodeBorderRadius={4}
-              maskColor="rgba(99, 102, 241, 0.2)"
-              maskStrokeColor="#818cf8"
-              maskStrokeWidth={2}
-              className="!bg-slate-950 !border !border-slate-800 !rounded-xl !shadow-2xl overflow-hidden !m-0 !relative"
-              pannable
-              zoomable
-            />
-          </div>
-        )}
 
-        {/* Hidden MiniMap Restore Toggle Button */}
-        {!showMiniMap && (
+            {/* React Flow MiniMap with custom card node renderer */}
+            <div className="rounded-xl overflow-hidden border border-slate-800/60 bg-slate-950">
+              <MiniMap
+                nodeComponent={CustomMiniMapNode}
+                nodeColor={(node: any) => {
+                  const table = node.data?.table as Table | undefined;
+                  const color = table?.color || 'indigo';
+                  switch (color) {
+                    case 'emerald':
+                      return '#10b981';
+                    case 'sky':
+                      return '#0284c7';
+                    case 'amber':
+                      return '#f59e0b';
+                    case 'rose':
+                      return '#f43f5e';
+                    case 'purple':
+                      return '#a855f7';
+                    case 'teal':
+                      return '#14b8a6';
+                    case 'slate':
+                      return '#64748b';
+                    default:
+                      return '#6366f1';
+                  }
+                }}
+                maskColor="rgba(2, 6, 23, 0.65)"
+                maskStrokeColor="#6366f1"
+                maskStrokeWidth={1.5}
+                className="!bg-transparent !m-0 !w-full !h-[120px] !border-0 !rounded-none"
+                pannable
+                zoomable
+              />
+            </div>
+          </div>
+        ) : (
           <button
             onClick={() => setShowMiniMap(true)}
-            title="Show Navigator MiniMap"
-            className="absolute right-4 bottom-4 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl shadow-xl text-xs font-mono text-slate-300 transition-all pointer-events-auto"
+            title="Open MiniMap Navigator"
+            className="absolute right-4 bottom-4 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl shadow-xl text-xs font-mono text-slate-300 hover:text-white transition-all pointer-events-auto group"
           >
-            <Eye className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Show Map</span>
+            <MapPin className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
+            <span>MiniMap</span>
           </button>
         )}
       </ReactFlow>
