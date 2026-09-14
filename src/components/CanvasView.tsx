@@ -291,8 +291,8 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
               </button>
             </div>
 
-            {/* React Flow MiniMap with custom card node renderer */}
-            <div className="rounded-xl overflow-hidden border border-slate-800/60 bg-slate-950">
+            {/* Strictly bounded & positioned MiniMap Canvas Wrapper */}
+            <div className="relative w-full h-[135px] rounded-xl overflow-hidden border border-slate-800/60 bg-slate-950">
               <MiniMap
                 nodeComponent={CustomMiniMapNode}
                 nodeColor={(node: any) => {
@@ -317,10 +317,11 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
                       return '#6366f1';
                   }
                 }}
-                maskColor="rgba(2, 6, 23, 0.65)"
+                maskColor="rgba(2, 6, 23, 0.7)"
                 maskStrokeColor="#6366f1"
                 maskStrokeWidth={1.5}
-                className="!bg-transparent !m-0 !w-full !h-[120px] !border-0 !rounded-none"
+                style={{ width: '100%', height: '100%', position: 'relative', margin: 0 }}
+                className="!bg-transparent !m-0 !w-full !h-full !border-0 !rounded-none !static overflow-hidden"
                 pannable
                 zoomable
               />

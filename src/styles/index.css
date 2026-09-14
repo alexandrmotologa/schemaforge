@@ -52,3 +52,20 @@
 .react-flow__handle-valid {
   background: #34d399 !important;
 }
+
+/* MiniMap strict containment and clipping */
+.react-flow__minimap {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+.react-flow__minimap-svg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
