@@ -1,4 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { Resvg } from '@resvg/resvg-js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function buildSchemaForgeLogo() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <defs>
     <clipPath id="squircle-clip">
       <rect x="24" y="24" width="976" height="976" rx="220" />
@@ -151,4 +160,38 @@
 
     </g>
   </g>
-</svg>
+</svg>`;
+}
+
+async function run() {
+  const outputDir = path.resolve(__dirname, '../docs/images');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  const svg = buildSchemaForgeLogo();
+  const svgPath = path.join(outputDir, 'logo.svg');
+  const pngPath = path.join(outputDir, 'logo.png');
+
+  fs.writeFileSync(svgPath, svg, 'utf-8');
+
+  const resvg = new Resvg(svg, {
+    fitTo: { mode: 'width', value: 1024 },
+  });
+  const pngBuffer = resvg.render().asPng();
+  fs.writeFileSync(pngPath, pngBuffer);
+
+  // Also copy to public/logo.png
+  const publicDir = path.resolve(__dirname, '../public');
+  if (fs.existsSync(publicDir)) {
+    fs.writeFileSync(path.join(publicDir, 'logo.png'), pngBuffer);
+    fs.writeFileSync(path.join(publicDir, 'logo.svg'), svg, 'utf-8');
+  }
+
+  console.log('✓ Successfully rendered refined logo.svg and logo.png at 1024x1024');
+}
+
+run().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

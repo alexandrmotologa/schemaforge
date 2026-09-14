@@ -1,68 +1,150 @@
-# SchemaForge
+<p align="center">
+  <img src="docs/images/logo.png" alt="SchemaForge Logo - The Aries Architect" width="130" style="border-radius: 28px;" />
+</p>
 
-SchemaForge is an interactive visual database schema designer and Entity-Relationship Diagram (ERD) studio. It runs entirely in the browser without server dependencies, letting engineers design relational tables, connect foreign keys on a canvas, and export schemas directly to SQL, Prisma, and Drizzle ORM.
+<h1 align="center">SchemaForge</h1>
 
-**Live Demo:** [https://schemaforge-psi.vercel.app](https://schemaforge-psi.vercel.app)
+<p align="center">
+  <strong>Interactive Visual Database Schema Designer, SQL Parser & Multi-Target Code Generation Studio</strong>
+</p>
 
-![SchemaForge Studio](public/favicon.svg)
+<p align="center">
+  <a href="https://schemaforge-psi.vercel.app"><img src="https://img.shields.io/badge/Vercel-Deployed-000000?style=flat&logo=vercel" alt="Vercel Deployment" /></a>
+  <a href="https://github.com/alexandrmotologa/schemaforge/actions"><img src="https://img.shields.io/badge/CI-Passing-10b981?style=flat&logo=githubactions&logoColor=white" alt="CI Status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82f6.svg?style=flat" alt="MIT License" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=black" alt="React 18" /></a>
+  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-5-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite 5" /></a>
+</p>
 
-## Capabilities
+<p align="center">
+  <a href="https://schemaforge-psi.vercel.app"><strong>🚀 Launch Live Web App</strong></a> &nbsp;|&nbsp;
+  <a href="#-visual-tour">Visual Tour</a> &nbsp;|&nbsp;
+  <a href="#-features">Features</a> &nbsp;|&nbsp;
+  <a href="#-supported-data-types">Data Types</a> &nbsp;|&nbsp;
+  <a href="#-getting-started">Getting Started</a> &nbsp;|&nbsp;
+  <a href="#-architecture">Architecture</a>
+</p>
 
-- **Interactive visual canvas:** Drag, zoom, pan, and arrange tables. Connect columns directly via handles to define foreign key relationships and cardinalities (1:1, 1:N, N:M).
-- **Bi-directional SQL parser:** Paste existing `CREATE TABLE` DDL to generate visual tables and relation edges automatically.
-- **Multi-target code generators:** Export synchronized schema definitions to PostgreSQL, SQLite, MySQL, Prisma ORM (`schema.prisma`), Drizzle ORM (TypeScript), and Mermaid.js ERD.
-- **Hierarchical auto-layout:** One-click Dagre graph layout organizes complex schemas without overlapping edges.
-- **Live schema diagnostics:** Real-time linter flags missing primary keys, dangling foreign keys, naming collisions, and type mismatches.
-- **Synthetic mock data generation:** Generate test fixtures in SQL `INSERT` statements or JSON records based on table structures and column types.
-- **High-resolution image export:** Save diagrams as PNG or vector SVG files.
-- **Built-in template gallery:** Explore reference architectures for E-Commerce, Multi-Tenant B2B Auth (RBAC), and FinTech Ledgers.
+---
 
-## Supported Data Types
+## Overview
 
-| Category | Types |
+SchemaForge is an in-browser relational schema modeler and Entity-Relationship Diagram (ERD) studio. It eliminates tedious manual migrations by combining an interactive node canvas with instant code generation for PostgreSQL, MySQL, SQLite, Prisma ORM, and Drizzle ORM.
+
+Engineers can draft relational entities, visually connect foreign keys with customizable cardinalities, generate mock fixtures for seeded testing, and synthesize full database models from natural language prompts.
+
+All operations execute client-side in WebAssembly and JavaScript—no cloud accounts, database credentials, or external API keys are required.
+
+---
+
+## 📸 Visual Tour
+
+### 1. Interactive Studio Canvas & ERD Modeling
+Pan, zoom, and organize complex schemas on a dot-grid canvas with interactive handles, relationship badges, minimap navigation, and collision-free auto-layout.
+
+![SchemaForge Studio Canvas](docs/screenshots/studio_canvas.png)
+
+---
+
+### 2. Real-Time Multi-Target Code Generation
+Inspect and download synchronized schema definitions in real-time across multiple dialects (PostgreSQL, SQLite, MySQL, Prisma, Drizzle ORM, Mermaid ERD, and Data Dictionary).
+
+![Live Code Generation Drawer](docs/screenshots/code_drawer.png)
+
+---
+
+### 3. AI Schema Architect (Prompt-to-DDL)
+Synthesize fully normalized database architectures directly from domain requirements or choose battle-tested blueprints for SaaS, E-Commerce, and FinTech.
+
+![AI Schema Architect](docs/screenshots/ai_architect.png)
+
+---
+
+### 4. Interactive Mock Data Grid & Synthetic Seeder
+Inspect table rows populated with type-aware synthetic test fixtures, search cells, and export directly to CSV or JSON seed files.
+
+![Interactive Mock Data Grid](docs/screenshots/data_grid.png)
+
+---
+
+### 5. Spotlight Search (`⌘K` / `Ctrl+K`)
+Quickly jump to any table, column, or data type across large models with fuzzy search and keyboard navigation.
+
+![Spotlight Quick Search](docs/screenshots/spotlight_search.png)
+
+---
+
+## ✨ Features
+
+- **Fluid ERD Canvas:** Drag-and-drop table nodes with type badges, primary key/unique indicators, index pills, and bezier relationship lines.
+- **Bi-Directional SQL Parser:** Paste raw `CREATE TABLE` DDL to automatically reconstruct visual tables, primary keys, and foreign key edges.
+- **Multi-Dialect Generators:**
+  - **PostgreSQL**: Standard DDL with `gen_random_uuid()`, constraints, and table comments.
+  - **SQLite**: Clean DDL with `WITHOUT ROWID` options and native foreign keys.
+  - **MySQL**: Strict InnoDB syntax with foreign key constraints and collation.
+  - **Prisma**: Idiomatic `schema.prisma` definitions with `@relation` fields and `@id`.
+  - **Drizzle ORM**: Type-safe TypeScript schema files utilizing `pgTable` constructs.
+  - **Mermaid.js**: Standard ER diagrams for documentation and Markdown wikis.
+  - **Data Dictionary**: Clean Markdown tables describing every table, column, type, and constraint.
+- **Collision-Free Auto-Layout:** Dagre-powered topological layout with dynamic vertical push-down to prevent overlapping nodes when tables expand.
+- **Synthetic Data Seeder:** Generates deterministic test fixtures adhering to column data types and foreign key relationships.
+- **Real-Time Schema Linter:** Flags orphaned foreign keys, missing primary keys, redundant indexes, and naming collisions.
+- **Vector & Raster Exports:** Download high-resolution PNG snapshots or crisp vector SVGs for presentations and technical specs.
+
+---
+
+## 🗄️ Supported Data Types
+
+| Category | Supported SQL Types |
 | :--- | :--- |
-| Identifiers & Integers | `UUID`, `SERIAL`, `BIGSERIAL`, `INTEGER`, `BIGINT`, `SMALLINT` |
-| Strings & Text | `VARCHAR`, `TEXT`, `CHAR` |
-| Floating-Point & Numeric | `DECIMAL`, `NUMERIC`, `REAL`, `DOUBLE PRECISION` |
-| Dates & Times | `TIMESTAMP`, `TIMESTAMPTZ`, `DATE`, `TIME` |
-| Structured & Logic | `BOOLEAN`, `JSON`, `JSONB`, `BYTEA` |
+| **Identifiers & Integers** | `UUID`, `SERIAL`, `BIGSERIAL`, `INTEGER`, `BIGINT`, `SMALLINT` |
+| **Strings & Text** | `VARCHAR`, `TEXT`, `CHAR` |
+| **Numeric & Floating-Point** | `DECIMAL`, `NUMERIC`, `REAL`, `DOUBLE PRECISION` |
+| **Dates & Timestamps** | `TIMESTAMP`, `TIMESTAMPTZ`, `DATE`, `TIME` |
+| **Structured & Logic** | `BOOLEAN`, `JSON`, `JSONB`, `BYTEA` |
 
-## Quick Start
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18 or later
-- npm 9 or later
+- Node.js 18+
+- npm 9+
 
 ### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/alexandrmotologa/schemaforge.git
 cd schemaforge
+
+# Install dependencies
 npm install
 ```
 
-### Development Server
+### Local Development
 
-Start the local development server:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser.
+Visit `http://localhost:3000` to launch the studio.
 
 ### Production Build
 
-Compile the application for production:
+Compile TypeScript and build the optimized static bundle:
 
 ```bash
 npm run build
 ```
 
-The output files are generated in the `dist/` directory.
+The production assets are generated in `dist/`.
 
-### Run Tests
+### Running Tests
 
 Execute the unit test suite with Vitest:
 
@@ -70,15 +152,55 @@ Execute the unit test suite with Vitest:
 npm test
 ```
 
-## Documentation
+---
 
-Detailed documentation is available in the `docs/` folder:
+## 📐 Architecture
 
-- [Architecture Overview](docs/architecture.md): AST data structures, layout engine, and state management.
-- [Code Generators](docs/generators.md): Specifications for PostgreSQL, SQLite, MySQL, Prisma, Drizzle, and Mermaid targets.
-- [SQL Parser Guide](docs/sql-parser.md): Supported SQL DDL syntax, constraints, and limitations.
-- [Contributing](docs/contributing.md): Setup instructions and coding conventions.
+```
+schemaforge/
+├── src/
+│   ├── components/       # Visual React components (Canvas, Drawers, Modals, Nodes)
+│   │   ├── nodes/        # Custom ReactFlow nodes (TableNode, ColumnRow)
+│   │   ├── edges/        # Custom bezier curves and cardinality markers
+│   │   └── modals/       # Data Grid, AI Architect, Import, Export
+│   ├── engine/           # Pure, framework-agnostic schema engine
+│   │   ├── types.ts      # Core AST definitions (Table, Column, Relationship)
+│   │   ├── autoLayout.ts # Dagre layout computation & push-down collision solver
+│   │   ├── mockDataGen.ts# Synthetic test fixture generator
+│   │   ├── generators/   # SQL, Prisma, Drizzle, Mermaid, & Markdown exporters
+│   │   └── parsers/      # SQL DDL tokenizer and AST builder
+│   ├── hooks/            # Schema state machines and undo/redo stacks
+│   └── App.tsx           # Studio root shell
+├── docs/                 # In-depth architectural & generator documentation
+│   ├── images/           # Brand identity assets (Aries Architect mascot logo)
+│   └── screenshots/      # High-resolution application screenshots
+└── public/               # Static assets & web manifest
+```
 
-## License
+For more details, see the documentation guides:
+- [Architecture Overview](docs/architecture.md)
+- [Code Generators Specification](docs/generators.md)
+- [SQL Parser Guide](docs/sql-parser.md)
+- [Contributing Guide](docs/contributing.md)
 
-MIT License. Copyright (c) 2026 alexandrmotologa.
+---
+
+## 🛡️ Brand Identity
+
+SchemaForge is represented by the **Aries Architect (Forge Ram)** mascot:
+
+<p align="center">
+  <img src="docs/images/logo.png" alt="Aries Architect Logo" width="180" style="border-radius: 36px;" />
+</p>
+
+- **Spiraling Geometric Horns:** Represent structural balance, foreign key constraints, and relational integrity.
+- **Obsidian & Faceted Armor:** Reflects database durability (ACID) and robust storage architectures.
+- **Cyan Keystone & Molten Amber Core:** Symbolizes schema synthesis and instant query compilation.
+
+Brand vector files are available under [`docs/images/logo.svg`](docs/images/logo.svg).
+
+---
+
+## 📄 License
+
+Distributed under the [MIT License](LICENSE). Copyright (c) 2026 Alexandr Motologa.

@@ -80,9 +80,11 @@ export const StudioNavbar: React.FC<StudioNavbarProps> = ({
     <header className="h-14 bg-slate-950/90 border-b border-slate-800/80 backdrop-blur-md px-4 flex items-center justify-between z-30 select-none">
       {/* Brand & Title */}
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-          <Database className="w-4 h-4 text-white" />
-        </div>
+        <img
+          src="./logo.svg"
+          alt="SchemaForge Logo"
+          className="w-8 h-8 rounded-lg shadow-lg shadow-indigo-500/25 object-contain border border-slate-700/50 bg-slate-900/60"
+        />
         <div>
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm text-white tracking-wide">SchemaForge</span>

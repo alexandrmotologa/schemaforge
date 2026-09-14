@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SchemaState, Table, Relationship } from '../engine/types';
 import { applyAutoLayout } from '../engine/autoLayout';
 import {
@@ -364,6 +364,15 @@ export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
   const [customPrompt, setCustomPrompt] = useState('');
   const [previewSchema, setPreviewSchema] = useState<SchemaState | null>(null);
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 

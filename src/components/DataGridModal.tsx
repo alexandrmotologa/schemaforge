@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SchemaState, Table } from '../engine/types';
 import { generateMockDataJson, generateMockDataCsv, generateAllTablesMockJson } from '../engine/mockDataGen';
 import {
@@ -32,6 +32,15 @@ export const DataGridModal: React.FC<DataGridModalProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedCell, setCopiedCell] = useState<string | null>(null);
   const [seedKey, setSeedKey] = useState(0);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   // Sync selectedTableId if tables change
   const activeTable = useMemo(() => {
