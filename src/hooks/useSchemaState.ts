@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Table, Column, Relationship, SchemaState, Diagnostic } from '../engine/types';
 import { ecommerceSample } from '../samples/ecommerce';
 import { SAMPLES } from '../samples';
-import { calculateAutoLayout } from '../engine/autoLayout';
+import { calculateAutoLayout, adjustDownwardPositions } from '../engine/autoLayout';
 import { lintSchema } from '../engine/linter';
 
 const STORAGE_KEY = 'schemaforge_workspace_v1';
@@ -76,13 +76,21 @@ export function useSchemaState() {
   const addTable = useCallback(
     (name: string, color = 'indigo') => {
       pushState((curr) => {
+        let posX = 80;
+        let posY = 80;
+        if (curr.tables.length > 0) {
+          const maxX = Math.max(...curr.tables.map((t) => t.position.x));
+          posX = maxX + 360;
+          posY = 80;
+        }
+
         const newTable: Table = {
           id: `table_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
           name: name.trim().toLowerCase().replace(/\s+/g, '_') || 'new_table',
           color,
           position: {
-            x: 100 + (curr.tables.length % 5) * 60,
-            y: 100 + (curr.tables.length % 5) * 60,
+            x: posX,
+            y: posY,
           },
           columns: [
             {
@@ -107,10 +115,14 @@ export function useSchemaState() {
 
   const updateTable = useCallback(
     (id: string, updates: Partial<Table>) => {
-      pushState((curr) => ({
-        ...curr,
-        tables: curr.tables.map((t) => (t.id === id ? { ...t, ...updates } : t)),
-      }));
+      pushState((curr) => {
+        const updated = curr.tables.map((t) => (t.id === id ? { ...t, ...updates } : t));
+        const adjusted = adjustDownwardPositions(updated, id, 60);
+        return {
+          ...curr,
+          tables: adjusted,
+        };
+      });
     },
     [pushState]
   );
@@ -141,9 +153,8 @@ export function useSchemaState() {
   // Column operations
   const addColumn = useCallback(
     (tableId: string, colData?: Partial<Column>) => {
-      pushState((curr) => ({
-        ...curr,
-        tables: curr.tables.map((t) => {
+      pushState((curr) => {
+        const updated = curr.tables.map((t) => {
           if (t.id !== tableId) return t;
           const colNum = t.columns.length + 1;
           const newCol: Column = {
@@ -159,8 +170,13 @@ export function useSchemaState() {
             ...t,
             columns: [...t.columns, newCol],
           };
-        }),
-      }));
+        });
+        const adjusted = adjustDownwardPositions(updated, tableId, 60);
+        return {
+          ...curr,
+          tables: adjusted,
+        };
+      });
     },
     [pushState]
   );

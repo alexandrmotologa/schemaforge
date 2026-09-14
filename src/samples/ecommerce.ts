@@ -89,7 +89,7 @@ export const ecommerceSample: SchemaState = {
       name: 'products',
       color: 'emerald',
       comment: 'Catalog items with pricing and inventory',
-      position: { x: 870, y: 320 },
+      position: { x: 870, y: 360 },
       columns: [
         { id: 'col_p_id', name: 'id', type: 'UUID', isPrimary: true, isNullable: false, isUnique: true },
         { id: 'col_p_cat_id', name: 'category_id', type: 'UUID', isPrimary: false, isNullable: false, isUnique: false },
@@ -103,7 +103,7 @@ export const ecommerceSample: SchemaState = {
       name: 'reviews',
       color: 'rose',
       comment: 'Customer ratings and feedback for products',
-      position: { x: 870, y: 680 },
+      position: { x: 870, y: 740 },
       columns: [
         { id: 'col_r_id', name: 'id', type: 'UUID', isPrimary: true, isNullable: false, isUnique: true },
         { id: 'col_r_user_id', name: 'user_id', type: 'UUID', isPrimary: false, isNullable: false, isUnique: false },
