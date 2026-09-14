@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import {
   ReactFlow,
   Background,
@@ -7,8 +7,8 @@ import {
   Connection,
   Node,
   Edge,
-  NodeChange,
-  applyNodeChanges,
+  useNodesState,
+  useEdgesState,
   BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -16,6 +16,7 @@ import '@xyflow/react/dist/style.css';
 import { Table, Column, Relationship, Cardinality } from '../engine/types';
 import { TableNode } from './nodes/TableNode';
 import { RelationshipEdge } from './edges/RelationshipEdge';
+import { MapPin, Eye, EyeOff } from 'lucide-react';
 
 interface CanvasViewProps {
   tables: Table[];
@@ -50,6 +51,8 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
   onAddRelationship,
   onDeleteRelationship,
 }) => {
+  const [showMiniMap, setShowMiniMap] = useState(true);
+
   // Cycle cardinality helper
   const handleCycleCardinality = useCallback(
     (relId: string) => {
@@ -76,25 +79,31 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
     [relationships, onDeleteRelationship, onAddRelationship]
   );
 
-  // Map tables to React Flow Nodes
-  const nodes: Node[] = useMemo(() => {
-    return tables.map((t) => ({
-      id: t.id,
-      type: 'table',
-      position: t.position || { x: 50, y: 50 },
-      data: {
-        table: t,
-        onUpdateTable,
-        onDeleteTable,
-        onAddColumn,
-        onUpdateColumn,
-        onDeleteColumn,
-      },
-    }));
+  // Map tables to React Flow Nodes with initial dimensions so MiniMap and layout measure immediately
+  const initialNodes: Node[] = useMemo(() => {
+    return tables.map((t) => {
+      const estimatedHeight = 56 + Math.max(1, t.columns.length) * 38 + 16;
+      return {
+        id: t.id,
+        type: 'table',
+        position: t.position || { x: 50, y: 50 },
+        initialWidth: 300,
+        initialHeight: estimatedHeight,
+        style: { width: 300 },
+        data: {
+          table: t,
+          onUpdateTable,
+          onDeleteTable,
+          onAddColumn,
+          onUpdateColumn,
+          onDeleteColumn,
+        },
+      };
+    });
   }, [tables, onUpdateTable, onDeleteTable, onAddColumn, onUpdateColumn, onDeleteColumn]);
 
   // Map relationships to React Flow Edges
-  const edges: Edge[] = useMemo(() => {
+  const initialEdges: Edge[] = useMemo(() => {
     return relationships.map((rel) => ({
       id: rel.id,
       source: rel.sourceTableId,
@@ -110,6 +119,18 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
       },
     }));
   }, [relationships, onDeleteRelationship, handleCycleCardinality]);
+
+  // Use React Flow node/edge states so dimensions & positions are properly tracked
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  useEffect(() => {
+    setNodes(initialNodes);
+  }, [initialNodes, setNodes]);
+
+  useEffect(() => {
+    setEdges(initialEdges);
+  }, [initialEdges, setEdges]);
 
   // Handle Drag Stop to save table position
   const handleNodeDragStop = useCallback(
@@ -151,6 +172,8 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
         edges={edges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
         onNodeDragStop={handleNodeDragStop}
         onConnect={handleConnect}
         fitView
@@ -170,29 +193,68 @@ export const CanvasView: React.FC<CanvasViewProps> = ({
         <Controls
           className="!bg-slate-900 !border !border-slate-800 !rounded-xl !overflow-hidden !shadow-2xl [&>button]:!bg-slate-900 [&>button]:!border-b [&>button]:!border-slate-800 [&>button]:!text-slate-300 hover:[&>button]:!bg-slate-800 hover:[&>button]:!text-white"
         />
-        <MiniMap
-          nodeColor={(node) => {
-            const table = (node.data as any)?.table as Table;
-            switch (table?.color) {
-              case 'emerald':
-                return '#10b981';
-              case 'sky':
-                return '#0284c7';
-              case 'amber':
-                return '#f59e0b';
-              case 'rose':
-                return '#f43f5e';
-              case 'purple':
-                return '#a855f7';
-              case 'teal':
-                return '#14b8a6';
-              default:
-                return '#6366f1';
-            }
-          }}
-          className="!bg-slate-950/80 !border !border-slate-800 !rounded-xl !shadow-2xl overflow-hidden !m-4"
-          maskColor="rgba(2, 6, 23, 0.7)"
-        />
+
+        {/* MiniMap with Toggle & Labels */}
+        {showMiniMap && (
+          <div className="absolute right-4 bottom-4 z-20 flex flex-col items-end gap-1 pointer-events-auto">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-900/90 border border-slate-800 rounded-lg shadow-lg text-[10px] font-mono text-slate-400">
+              <MapPin className="w-3 h-3 text-indigo-400" />
+              <span>NAVIGATOR</span>
+              <button
+                onClick={() => setShowMiniMap(false)}
+                title="Hide Navigator"
+                className="ml-1 text-slate-500 hover:text-slate-300"
+              >
+                <EyeOff className="w-3 h-3" />
+              </button>
+            </div>
+            <MiniMap
+              nodeColor={(node: any) => {
+                const table = node.data?.table as Table | undefined;
+                const color = table?.color || 'indigo';
+                switch (color) {
+                  case 'emerald':
+                    return '#10b981';
+                  case 'sky':
+                    return '#0284c7';
+                  case 'amber':
+                    return '#f59e0b';
+                  case 'rose':
+                    return '#f43f5e';
+                  case 'purple':
+                    return '#a855f7';
+                  case 'teal':
+                    return '#14b8a6';
+                  case 'slate':
+                    return '#64748b';
+                  default:
+                    return '#6366f1';
+                }
+              }}
+              nodeStrokeColor="#0f172a"
+              nodeStrokeWidth={2}
+              nodeBorderRadius={4}
+              maskColor="rgba(99, 102, 241, 0.2)"
+              maskStrokeColor="#818cf8"
+              maskStrokeWidth={2}
+              className="!bg-slate-950 !border !border-slate-800 !rounded-xl !shadow-2xl overflow-hidden !m-0 !relative"
+              pannable
+              zoomable
+            />
+          </div>
+        )}
+
+        {/* Hidden MiniMap Restore Toggle Button */}
+        {!showMiniMap && (
+          <button
+            onClick={() => setShowMiniMap(true)}
+            title="Show Navigator MiniMap"
+            className="absolute right-4 bottom-4 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl shadow-xl text-xs font-mono text-slate-300 transition-all pointer-events-auto"
+          >
+            <Eye className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Show Map</span>
+          </button>
+        )}
       </ReactFlow>
     </div>
   );
