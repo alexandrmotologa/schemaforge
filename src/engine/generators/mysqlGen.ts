@@ -103,6 +103,14 @@ function generateMySqlTable(table: Table): string {
     lines.push(`  PRIMARY KEY (${pkList})`);
   }
 
+  if (table.indexes && table.indexes.length > 0) {
+    table.indexes.forEach((idx) => {
+      const keyType = idx.isUnique ? 'UNIQUE KEY' : 'KEY';
+      const cols = idx.columns.map((c) => `\`${c}\``).join(', ');
+      lines.push(`  ${keyType} \`${idx.name}\` (${cols})`);
+    });
+  }
+
   return `CREATE TABLE IF NOT EXISTS \`${table.name}\` (\n${lines.join(',\n')}\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`;
 }
 

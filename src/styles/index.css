@@ -4,9 +4,29 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 font-sans;
+    @apply bg-slate-950 text-slate-100 font-sans transition-colors duration-200;
   }
 }
+
+/* Clean Light Mode Theme */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.light header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+html.light .react-flow__background {
+  background-color: #f1f5f9 !important;
+}
+
 
 @keyframes dashdraw {
   from {

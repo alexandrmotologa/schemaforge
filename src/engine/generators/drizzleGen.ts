@@ -5,7 +5,7 @@ export function generateDrizzleSchema(schema: SchemaState): string {
     '// SchemaForge Drizzle ORM Schema Export (PostgreSQL)',
     '// Docs: https://orm.drizzle.team/docs/sql-schema-declaration',
     '',
-    "import { pgTable, text, varchar, integer, bigint, boolean, timestamp, uuid, jsonb, decimal } from 'drizzle-orm/pg-core';",
+    "import { pgTable, text, varchar, integer, bigint, boolean, timestamp, uuid, jsonb, decimal, index, uniqueIndex } from 'drizzle-orm/pg-core';",
     "import { relations } from 'drizzle-orm';",
     ''
   ];
@@ -123,6 +123,15 @@ function mapDrizzleColumn(col: Column, table: Table, schema: SchemaState): strin
 function generateDrizzleTable(table: Table, schema: SchemaState): string {
   const tableVar = toCamelCase(table.name);
   const colLines = table.columns.map((col) => mapDrizzleColumn(col, table, schema));
+
+  if (table.indexes && table.indexes.length > 0) {
+    const idxLines = table.indexes.map((idx) => {
+      const fn = idx.isUnique ? 'uniqueIndex' : 'index';
+      const colRefs = idx.columns.map((colName) => `table.${toCamelCase(colName)}`).join(', ');
+      return `    ${fn}('${idx.name}').on(${colRefs}),`;
+    });
+    return `export const ${tableVar} = pgTable('${table.name}', {\n${colLines.join('\n')}\n}, (table) => [\n${idxLines.join('\n')}\n]);`;
+  }
 
   return `export const ${tableVar} = pgTable('${table.name}', {\n${colLines.join('\n')}\n});`;
 }

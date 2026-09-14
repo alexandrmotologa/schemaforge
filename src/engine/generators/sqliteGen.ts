@@ -19,6 +19,18 @@ export function generateSqliteDdl(schema: SchemaState): string {
     parts.push('');
   });
 
+  // Generate Indexes
+  schema.tables.forEach((table) => {
+    if (table.indexes && table.indexes.length > 0) {
+      table.indexes.forEach((idx) => {
+        const uniqueStr = idx.isUnique ? 'UNIQUE ' : '';
+        const cols = idx.columns.map((c) => `"${c}"`).join(', ');
+        parts.push(`CREATE ${uniqueStr}INDEX IF NOT EXISTS "${idx.name}" ON "${table.name}" (${cols});`);
+      });
+      parts.push('');
+    }
+  });
+
   return parts.join('\n');
 }
 

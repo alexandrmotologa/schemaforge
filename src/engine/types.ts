@@ -31,12 +31,21 @@ export interface Column {
   comment?: string;
 }
 
+export interface IndexDefinition {
+  id: string;
+  name: string;
+  columns: string[]; // column names
+  isUnique: boolean;
+  type?: 'BTREE' | 'GIN' | 'HASH';
+}
+
 export interface Table {
   id: string;
   name: string;
   color?: string;
   comment?: string;
   columns: Column[];
+  indexes?: IndexDefinition[];
   position: { x: number; y: number };
 }
 
@@ -77,4 +86,5 @@ export type CodeExportTarget =
   | 'prisma'
   | 'drizzle'
   | 'mermaid'
-  | 'mockData';
+  | 'mockData'
+  | 'dataDictionary';

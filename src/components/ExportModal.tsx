@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { SchemaState } from '../engine/types';
 import { generatePostgreSql } from '../engine/generators/postgresGen';
+import { generateDataDictionaryMarkdown } from '../engine/generators/dataDictionaryGen';
 import { toPng, toSvg } from 'html-to-image';
-import { Download, Image as ImageIcon, FileCode, FileJson, X, Check, Loader2 } from 'lucide-react';
+import { Download, Image as ImageIcon, FileCode, FileJson, X, Check, Loader2, BookOpen } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -62,6 +63,17 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, schem
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = 'schemaforge-postgres.sql';
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportDataDictionary = () => {
+    const md = generateDataDictionaryMarkdown(schema);
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'DATA_DICTIONARY.md';
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
@@ -139,6 +151,18 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, schem
             </div>
             <div className="font-semibold text-xs text-white">SchemaForge Backup (.json)</div>
             <p className="text-[11px] text-slate-400 mt-1">Full state backup for importing anytime.</p>
+          </button>
+
+          {/* Data Dictionary Markdown */}
+          <button
+            onClick={exportDataDictionary}
+            className="flex flex-col items-start p-4 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-violet-500/50 hover:bg-slate-800/40 text-left transition-all group sm:col-span-2"
+          >
+            <div className="p-2 rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20 mb-2 group-hover:scale-105 transition-transform">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div className="font-semibold text-xs text-white">Data Dictionary (.md)</div>
+            <p className="text-[11px] text-slate-400 mt-1">Full comprehensive Markdown documentation with column specs, indexes, and Mermaid ERD diagram.</p>
           </button>
         </div>
 

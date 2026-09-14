@@ -147,5 +147,15 @@ function generatePrismaModel(table: Table, schema: SchemaState): string {
     }
   });
 
+  // Model level indexes
+  if (table.indexes && table.indexes.length > 0) {
+    table.indexes.forEach((idx) => {
+      const directive = idx.isUnique ? '@@unique' : '@@index';
+      const cols = idx.columns.join(', ');
+      const mapClause = idx.name ? `, map: "${idx.name}"` : '';
+      lines.push(`  ${directive}([${cols}]${mapClause})`);
+    });
+  }
+
   return `model ${modelName} {\n${lines.join('\n')}\n\n  @@map("${table.name}")\n}`;
 }

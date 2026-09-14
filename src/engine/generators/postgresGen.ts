@@ -31,6 +31,27 @@ export function generatePostgreSql(schema: SchemaState): string {
     parts.push('');
   }
 
+  // Generate Indexes
+  const indexLines: string[] = [];
+  schema.tables.forEach((table) => {
+    if (table.indexes && table.indexes.length > 0) {
+      table.indexes.forEach((idx) => {
+        const uniqueStr = idx.isUnique ? 'UNIQUE ' : '';
+        const usingStr = idx.type ? ` USING ${idx.type}` : '';
+        const cols = idx.columns.map((c) => `"${c}"`).join(', ');
+        indexLines.push(`CREATE ${uniqueStr}INDEX IF NOT EXISTS "${idx.name}" ON "${table.name}"${usingStr} (${cols});`);
+      });
+    }
+  });
+
+  if (indexLines.length > 0) {
+    parts.push('--');
+    parts.push('-- Indexes');
+    parts.push('--');
+    parts.push(indexLines.join('\n'));
+    parts.push('');
+  }
+
   return parts.join('\n');
 }
 

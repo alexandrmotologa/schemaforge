@@ -1,7 +1,15 @@
 import dagre from '@dagrejs/dagre';
-import { Table, Relationship } from './types';
+import { Table, Relationship, SchemaState } from './types';
 
 export type LayoutDirection = 'TB' | 'LR';
+
+export function applyAutoLayout(schema: SchemaState, direction: LayoutDirection = 'LR'): SchemaState {
+  const positioned = calculateAutoLayout(schema.tables, schema.relationships, direction);
+  return {
+    tables: positioned,
+    relationships: schema.relationships,
+  };
+}
 
 export function calculateAutoLayout(
   tables: Table[],

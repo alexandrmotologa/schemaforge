@@ -28,6 +28,30 @@ export function generateMockDataJson(table: Table, rowCount = 5): Record<string,
   return records;
 }
 
+export function generateMockDataCsv(table: Table, rowCount = 10): string {
+  if (table.columns.length === 0) return '';
+  const headers = table.columns.map((c) => `"${c.name.replace(/"/g, '""')}"`).join(',');
+  const rows = generateMockDataJson(table, rowCount).map((record) => {
+    return table.columns
+      .map((col) => {
+        const val = record[col.name];
+        if (val === null || val === undefined) return '';
+        const str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+        return `"${str.replace(/"/g, '""')}"`;
+      })
+      .join(',');
+  });
+  return [headers, ...rows].join('\n');
+}
+
+export function generateAllTablesMockJson(schema: SchemaState, rowsPerTable = 5): Record<string, unknown[]> {
+  const result: Record<string, unknown[]> = {};
+  schema.tables.forEach((t) => {
+    result[t.name] = generateMockDataJson(t, rowsPerTable);
+  });
+  return result;
+}
+
 export function generateAllTablesMockSql(schema: SchemaState, rowsPerTable = 3): string {
   const parts: string[] = [
     '--',

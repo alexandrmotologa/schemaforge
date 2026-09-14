@@ -6,8 +6,9 @@ import { generateMySql } from '../engine/generators/mysqlGen';
 import { generatePrismaSchema } from '../engine/generators/prismaGen';
 import { generateDrizzleSchema } from '../engine/generators/drizzleGen';
 import { generateMermaidErDiagram } from '../engine/generators/mermaidGen';
+import { generateDataDictionaryMarkdown } from '../engine/generators/dataDictionaryGen';
 import { generateAllTablesMockSql } from '../engine/mockDataGen';
-import { Copy, Check, Download, X, Code, Sparkles } from 'lucide-react';
+import { Copy, Check, Download, X, Code, Sparkles, BookOpen } from 'lucide-react';
 
 interface CodeDrawerProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ const TABS: TargetTab[] = [
   { id: 'prisma', label: 'Prisma', ext: 'prisma', mime: 'text/plain' },
   { id: 'drizzle', label: 'Drizzle ORM', ext: 'ts', mime: 'text/typescript' },
   { id: 'mermaid', label: 'Mermaid ERD', ext: 'md', mime: 'text/markdown' },
+  { id: 'dataDictionary', label: 'Data Dictionary', ext: 'md', mime: 'text/markdown' },
   { id: 'mockData', label: 'Mock Data SQL', ext: 'sql', mime: 'text/sql' },
 ];
 
@@ -51,6 +53,8 @@ export const CodeDrawer: React.FC<CodeDrawerProps> = ({ isOpen, onClose, schema 
         return generateDrizzleSchema(schema);
       case 'mermaid':
         return generateMermaidErDiagram(schema);
+      case 'dataDictionary':
+        return generateDataDictionaryMarkdown(schema);
       case 'mockData':
         return generateAllTablesMockSql(schema, 5);
       default:

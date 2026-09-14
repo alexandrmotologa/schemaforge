@@ -6,6 +6,7 @@ import { Key, Trash2, Check, X, ShieldAlert, Hash } from 'lucide-react';
 interface ColumnRowProps {
   column: Column;
   tableId: string;
+  isIndexed?: boolean;
   onUpdate: (tableId: string, colId: string, updates: Partial<Column>) => void;
   onDelete: (tableId: string, colId: string) => void;
 }
@@ -34,6 +35,7 @@ const DATA_TYPES: DataType[] = [
 export const ColumnRow: React.FC<ColumnRowProps> = ({
   column,
   tableId,
+  isIndexed,
   onUpdate,
   onDelete,
 }) => {
@@ -157,6 +159,15 @@ export const ColumnRow: React.FC<ColumnRowProps> = ({
             className="text-[9px] px-1 py-0.2 bg-violet-950/60 text-violet-300 border border-violet-800/40 rounded font-semibold"
           >
             UQ
+          </span>
+        )}
+
+        {isIndexed && (
+          <span
+            title="Indexed Column"
+            className="text-[9px] px-1 py-0.2 bg-indigo-950/70 text-indigo-300 border border-indigo-700/50 rounded font-semibold font-mono"
+          >
+            IDX
           </span>
         )}
       </div>
