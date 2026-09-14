@@ -1,20 +1,23 @@
-name: CI & GitHub Pages Deploy
+name: CI Test & Build
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: 'ci-and-pages'
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
+  test-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -29,14 +32,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run automated test suite
+      - name: Run automated test suite (Vitest)
         run: npm test -- --run
 
-      - name: Build production bundle
+      - name: Build production bundle (TypeScript & Vite)
         run: npm run build
-
-      - name: Deploy to GitHub Pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
