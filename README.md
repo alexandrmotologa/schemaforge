@@ -2,6 +2,8 @@
 
 SchemaForge is an interactive visual database schema designer and Entity-Relationship Diagram (ERD) studio. It runs entirely in the browser without server dependencies, letting engineers design relational tables, connect foreign keys on a canvas, and export schemas directly to SQL, Prisma, and Drizzle ORM.
 
+**Live Demo:** [https://schemaforge-psi.vercel.app](https://schemaforge-psi.vercel.app)
+
 ![SchemaForge Studio](public/favicon.svg)
 
 ## Capabilities
