@@ -1,0 +1,102 @@
+import { SchemaState } from '../engine/types';
+
+export const fintechSample: SchemaState = {
+  tables: [
+    {
+      id: 'table_currencies',
+      name: 'currencies',
+      color: 'amber',
+      comment: 'ISO currencies and precision standards',
+      position: { x: 50, y: 50 },
+      columns: [
+        { id: 'col_curr_code', name: 'code', type: 'VARCHAR', isPrimary: true, isNullable: false, isUnique: true },
+        { id: 'col_curr_name', name: 'name', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_curr_decimals', name: 'decimal_places', type: 'INTEGER', isPrimary: false, isNullable: false, isUnique: false, defaultValue: '2' },
+      ],
+    },
+    {
+      id: 'table_accounts',
+      name: 'accounts',
+      color: 'indigo',
+      comment: 'Financial chart of accounts (Asset, Liability, Equity, Revenue, Expense)',
+      position: { x: 380, y: 50 },
+      columns: [
+        { id: 'col_acc_id', name: 'id', type: 'UUID', isPrimary: true, isNullable: false, isUnique: true, defaultValue: 'gen_random_uuid()' },
+        { id: 'col_acc_currency', name: 'currency_code', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_acc_number', name: 'account_number', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: true },
+        { id: 'col_acc_type', name: 'account_type', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_acc_balance', name: 'current_balance', type: 'DECIMAL', isPrimary: false, isNullable: false, isUnique: false, defaultValue: '0.00' },
+      ],
+    },
+    {
+      id: 'table_transactions',
+      name: 'transactions',
+      color: 'emerald',
+      comment: 'Grouped economic financial event',
+      position: { x: 740, y: 50 },
+      columns: [
+        { id: 'col_tx_id', name: 'id', type: 'UUID', isPrimary: true, isNullable: false, isUnique: true, defaultValue: 'gen_random_uuid()' },
+        { id: 'col_tx_ref', name: 'reference_code', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: true },
+        { id: 'col_tx_desc', name: 'description', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_tx_status', name: 'status', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false, defaultValue: "'posted'" },
+        { id: 'col_tx_posted', name: 'posted_at', type: 'TIMESTAMP', isPrimary: false, isNullable: false, isUnique: false },
+      ],
+    },
+    {
+      id: 'table_ledger_entries',
+      name: 'ledger_entries',
+      color: 'sky',
+      comment: 'Immutable double-entry debit and credit lines',
+      position: { x: 560, y: 350 },
+      columns: [
+        { id: 'col_le_id', name: 'id', type: 'UUID', isPrimary: true, isNullable: false, isUnique: true },
+        { id: 'col_le_tx_id', name: 'transaction_id', type: 'UUID', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_le_acc_id', name: 'account_id', type: 'UUID', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_le_direction', name: 'entry_direction', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_le_amount', name: 'amount', type: 'DECIMAL', isPrimary: false, isNullable: false, isUnique: false },
+      ],
+    },
+    {
+      id: 'table_webhooks',
+      name: 'webhook_endpoints',
+      color: 'rose',
+      comment: 'Outbound HTTP event dispatch listeners',
+      position: { x: 100, y: 350 },
+      columns: [
+        { id: 'col_wh_id', name: 'id', type: 'UUID', isPrimary: true, isNullable: false, isUnique: true },
+        { id: 'col_wh_url', name: 'target_url', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_wh_secret', name: 'signing_secret', type: 'VARCHAR', isPrimary: false, isNullable: false, isUnique: false },
+        { id: 'col_wh_active', name: 'is_active', type: 'BOOLEAN', isPrimary: false, isNullable: false, isUnique: false, defaultValue: 'true' },
+      ],
+    },
+  ],
+  relationships: [
+    {
+      id: 'rel_acc_curr',
+      sourceTableId: 'table_accounts',
+      sourceColumnId: 'col_acc_currency',
+      targetTableId: 'table_currencies',
+      targetColumnId: 'col_curr_code',
+      cardinality: 'ONE_TO_MANY',
+      onDelete: 'RESTRICT',
+    },
+    {
+      id: 'rel_le_tx',
+      sourceTableId: 'table_ledger_entries',
+      sourceColumnId: 'col_le_tx_id',
+      targetTableId: 'table_transactions',
+      targetColumnId: 'col_tx_id',
+      cardinality: 'ONE_TO_MANY',
+      onDelete: 'CASCADE',
+    },
+    {
+      id: 'rel_le_acc',
+      sourceTableId: 'table_ledger_entries',
+      sourceColumnId: 'col_le_acc_id',
+      targetTableId: 'table_accounts',
+      targetColumnId: 'col_acc_id',
+      cardinality: 'ONE_TO_MANY',
+      onDelete: 'RESTRICT',
+    },
+  ],
+};

@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans;
+  }
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-dash {
+  animation: dashdraw 1s linear infinite;
+}
+
+/* Custom Scrollbar for Code Drawer */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* React Flow custom tweaks */
+.react-flow__handle {
+  border-radius: 9999px !important;
+}
+
+.react-flow__handle-connecting {
+  background: #38bdf8 !important;
+}
+
+.react-flow__handle-valid {
+  background: #34d399 !important;
+}
