@@ -36,6 +36,10 @@ Engineers can draft relational entities, visually connect foreign keys with cust
 
 All operations execute client-side in WebAssembly and JavaScript—no cloud accounts, database credentials, or external API keys are required.
 
+<p align="center">
+  <img src="docs/images/schemaforge_demo.gif" alt="SchemaForge Studio Interactive Demo" width="100%" style="border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);" />
+</p>
+
 ---
 
 ## 📸 Visual Tour
