@@ -342,18 +342,19 @@ const InnerFlowCanvas: React.FC<CanvasViewProps> = ({
       {!showMiniMap && (
         <button
           onClick={() => setShowMiniMap(true)}
-          className="absolute bottom-5 right-5 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md text-slate-300 hover:text-white hover:border-indigo-500/50 text-xs font-medium transition-all"
+          className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 z-20 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md text-slate-300 hover:text-white hover:border-indigo-500/50 text-xs font-medium transition-all"
         >
           <MapPin className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Show MiniMap</span>
+          <span className="hidden sm:inline">Show MiniMap</span>
+          <span className="inline sm:hidden">Map</span>
         </button>
       )}
 
       {/* Custom MiniMap Panel */}
       {showMiniMap && (
-        <div className="absolute bottom-5 right-5 z-20 w-[240px] h-[135px] relative overflow-hidden rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md transition-all">
+        <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 z-20 w-[180px] h-[110px] sm:w-[220px] sm:h-[125px] md:w-[240px] md:h-[135px] relative overflow-hidden rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md transition-all">
           <div className="absolute top-2 left-2.5 z-30 flex items-center justify-between w-[calc(100%-20px)] pointer-events-none">
-            <span className="text-[10px] font-mono font-semibold text-slate-400 uppercase tracking-wider bg-slate-950/70 px-1.5 py-0.5 rounded border border-slate-800">
+            <span className="text-[9px] sm:text-[10px] font-mono font-semibold text-slate-400 uppercase tracking-wider bg-slate-950/70 px-1.5 py-0.5 rounded border border-slate-800">
               Overview
             </span>
             <button

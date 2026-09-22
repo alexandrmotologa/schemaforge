@@ -94,6 +94,7 @@ Quickly jump to any table, column, or data type across large models with fuzzy s
 - **Collision-Free Auto-Layout:** Dagre-powered topological layout with dynamic vertical push-down to prevent overlapping nodes when tables expand.
 - **Synthetic Data Seeder:** Generates deterministic test fixtures adhering to column data types and foreign key relationships.
 - **Real-Time Schema Linter:** Flags orphaned foreign keys, missing primary keys, redundant indexes, and naming collisions.
+- **Adaptive Studio Layout:** Responsive navbar and drawer system optimized across viewports down to 800px with collapsible overflow controls.
 - **Vector & Raster Exports:** Download high-resolution PNG snapshots or crisp vector SVGs for presentations and technical specs.
 
 ---

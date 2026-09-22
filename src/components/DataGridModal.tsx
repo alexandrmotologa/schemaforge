@@ -105,29 +105,29 @@ export const DataGridModal: React.FC<DataGridModalProps> = ({
     <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 select-none">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl h-[85vh] shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
-              <FileSpreadsheet className="w-5 h-5" />
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-800 flex flex-wrap sm:flex-nowrap items-center justify-between bg-slate-950/60 gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+              <FileSpreadsheet className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <h3 className="font-semibold text-white text-base flex items-center gap-2">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-white text-sm sm:text-base flex items-center gap-2 flex-wrap">
                 <span>Interactive Mock Data Grid</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
                   Synthetic Seeder
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate max-w-[480px]">
                 Preview realistic test fixtures and export directly to CSV or JSON seed files.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             <button
               onClick={handleExportCsv}
               disabled={!activeTable}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-all hover:border-emerald-500/40"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-all hover:border-emerald-500/40"
               title="Export Current Table as CSV"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
@@ -136,16 +136,17 @@ export const DataGridModal: React.FC<DataGridModalProps> = ({
 
             <button
               onClick={handleExportAllJson}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-lg shadow-indigo-600/20"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-lg shadow-indigo-600/20"
               title="Export All Tables as JSON Seeder"
             >
               <FileJson className="w-3.5 h-3.5" />
-              <span>Export All (JSON)</span>
+              <span className="hidden sm:inline">Export All (JSON)</span>
+              <span className="inline sm:hidden">JSON</span>
             </button>
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-2"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-1"
             >
               <X className="w-5 h-5" />
             </button>
@@ -153,20 +154,20 @@ export const DataGridModal: React.FC<DataGridModalProps> = ({
         </div>
 
         {/* Table Selector Tabs & Controls Bar */}
-        <div className="px-6 py-2.5 border-b border-slate-800 bg-slate-950/40 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-2.5 border-b border-slate-800 bg-slate-950/40 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5">
           {/* Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none flex-1 min-w-0">
             {schema.tables.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setSelectedTableId(t.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex-shrink-0 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex-shrink-0 ${
                   activeTable?.id === t.id
                     ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500 font-semibold shadow-sm'
                     : 'bg-slate-800/60 text-slate-400 border border-slate-700/60 hover:text-slate-200 hover:border-slate-600'
                 }`}
               >
-                <TableIcon className="w-3.5 h-3.5" />
+                <TableIcon className="w-3.5 h-3.5 flex-shrink-0" />
                 <span>{t.name}</span>
                 <span className="text-[10px] px-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-400">
                   {t.columns.length}
@@ -176,7 +177,7 @@ export const DataGridModal: React.FC<DataGridModalProps> = ({
           </div>
 
           {/* Controls: Search, Row Count, Regenerate */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 self-end md:self-auto">
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
               <input
@@ -184,7 +185,7 @@ export const DataGridModal: React.FC<DataGridModalProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter rows..."
-                className="bg-slate-950 border border-slate-700 text-xs text-white pl-8 pr-2.5 py-1.5 rounded-xl w-36 focus:w-48 transition-all focus:outline-none focus:border-indigo-500 font-sans"
+                className="bg-slate-950 border border-slate-700 text-xs text-white pl-8 pr-2.5 py-1.5 rounded-xl w-32 sm:w-36 focus:w-44 transition-all focus:outline-none focus:border-indigo-500 font-sans"
               />
             </div>
 
